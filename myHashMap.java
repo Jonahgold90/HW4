@@ -1,5 +1,5 @@
 /*
- * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
+ * *** Jonah Goldberg / Section 002 ***
  *
  * This hashMap object represents an over simplification of Java's implementation of HashMap within
  * Java's Collection Framework Library. You are to complete the following methods:
@@ -73,9 +73,9 @@
  ****************************************/
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 
 /**
@@ -230,6 +230,35 @@ class myHashMap<K,V> {
          * the return value discussion in this method's prologue to make sure the correct
          * return value is returned the invoking function based on the remove outcome.
          */
+
+        //Gets the bucket index of the provided key
+        int index = getBucketIndex(key);
+
+        //Get the head node of the bucket that the key exists in
+        HashNode<K, V> head = bucket.get(index);
+        
+        //Secondary pointer to keep track of the last value in the linked list
+        HashNode<K, V> prev = null;
+
+        while(head != null) {
+            if(head.key.equals(key)) {
+                if(prev != null) {
+                    //Links the previous node to the node after curr node (effectively removing current node)
+                    prev.next = head.next;
+                } else {
+                    //If the target node is the head of the linked list then set the bucket to the next node
+                    bucket.set(index, head.next);
+                }
+                //Decrement size counter
+                size--;
+                return head.value;
+            }
+            //Set the previous value to the curr head
+            prev = head;
+            //Increment the head
+            head = head.next;
+        }
+
 
         return null;
     }
@@ -405,8 +434,38 @@ class myHashMap<K,V> {
          * Make sure you return the proper value based on the outcome of this method's
          * replace (see method's prologue above).
          */
+        //Get the index of the bucket that the key is in
+        int index = getBucketIndex(key);
 
-        return val;
+        //Get the head node of the bucket that the key exists in
+        HashNode<K, V> head = bucket.get(index);
+
+
+        //Loop unless head is null 
+        while(head != null) {
+            System.out.println("Checking node with key: " + head.key);
+
+            //Check if the key exists in the linked list
+            if(head.key.equals(key)) {
+                //Store the old value
+                V oldVal = head.value;
+                System.out.println("Found key! Old value: " + oldVal);
+
+                //Replace the current head value
+                head.value = val;
+                System.out.println("Value replaced with: " + val);
+
+                //Return the old value
+                return oldVal;
+                
+            }
+            //Move the head forward
+            head = head.next;
+        }
+        System.out.println("Key not found, returning null");
+
+        //If the key was not found then return null
+        return null;
     }
 
     
@@ -433,6 +492,31 @@ class myHashMap<K,V> {
          * This method should apply the precondition (aka, the Key already exists with the
          * value 'oldval', and is so, it SHOULD call replace(K, V) for code reuse.
          */
+
+        //Get the index of the bucket that the key is in
+        int index = getBucketIndex(key);
+
+        //Get the head node of the bucket that the key exists in
+        HashNode<K, V> head = bucket.get(index);
+
+        while(head != null) {
+            //Check if we have found the correct key
+            if(head.key.equals(key)) {
+                //Check if the key has the correct old value
+                if(head.value.equals(oldVal)) {
+                    //Call the other replace method now that we have verified old key is correct
+                    replace(key, newVal);
+
+                    //Return true
+                    return true;
+                } else {
+                    //Return false if the old value is not correct
+                    return false;
+                }
+            }
+            //Move the head forward
+            head = head.next;
+        }
 
         return false;
     }

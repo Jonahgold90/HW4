@@ -10,10 +10,10 @@
  *  - twoSums
  */
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 class HashingProblems {
 
@@ -40,8 +40,38 @@ class HashingProblems {
          * returning 0.0 is NOT correct, as that is not the average value. Whereas
          * returning 0.0/0.0 IS correct (which would return a non-number).
          */
+        //Holds the total sum of the values of keys that are present in the array and the hashmap
+        double sum = 0.0;
 
-         return 0.0 / 0.0;
+        //Counter to hold number of keys found in array and hashmap
+        int count = 0;
+
+        //Create a hashset for better lookup time of O(1) for the array elements
+        HashSet<Integer> arrayKeys = new HashSet<>();
+        
+        //Add all array elements into the new hashset 
+        for(int num : array) {
+            arrayKeys.add(num);
+        }
+
+        //Iterate through all the keys in the hashmap
+        for(Map.Entry<Integer, Integer> entry: map.entrySet()) {
+            //Check if the array hashset contains the current hashmap key
+            if(arrayKeys.contains(entry.getKey())) {
+                //Increment count
+                count++;
+                //Add the hashmaps value to the current sum
+                sum += entry.getValue();
+            }
+        }
+
+        //If count is 0 then no commong keys were found so return 0.0 / 0.0
+        if(count == 0) {
+            return 0.0 / 0.0;
+        }
+
+        //Return the average of the values
+        return sum / count;
   }
 
 
@@ -61,8 +91,17 @@ class HashingProblems {
        *
        * Hint: Consider iterating over the HashMap using the keySet method.
        */
+        
+        //Iterate through the keys in the map
+        for(Integer Key : map.keySet()) {
+            //If the key is odd
+            if(Key % 2 != 0) {
+                //Adds the string that the key cooresponds with to the array list
+                result.add(map.get(Key));
+            } 
+        }
 
-
+      //Return the array list with the strings cooresponding to the odd keys
       return result;
   }
 
@@ -106,11 +145,48 @@ class HashingProblems {
 
   public int twoSums(int[] numbers, int k) {
 
-      /*
-       * ADD YOUR CODE HERE
-       */
+    /*
+    * ADD YOUR CODE HERE
+    */
+    
 
-      return -1;
+
+    //Count of how many times k appears
+    int count = 0;
+
+    //Hashset to hold the numbers
+    HashSet<Integer> nums = new HashSet<>();
+    
+    //Add all of the numbers from the array into the hashset for O(1) lookup
+    for(int num : numbers) {
+        nums.add(num);
+    }
+
+    //Iterate through every number in the numbers array
+    for(int num : numbers) {
+        //Define target which is the current num - k
+        int minus_target = num - k;
+
+        int plus_target = num + k;
+
+        //Search for num - k in the set
+        if(nums.contains(minus_target)) {
+            //Since the target exists we know that we can get K so increment count
+            count++;
+        }
+
+        //Search for num + k in the set
+        if(nums.contains(plus_target)) {
+            //Since the target exists we know that we can get K so increment count
+            count++;
+        } 
+
+        //Avoid double counting by removing the number from the set
+        nums.remove(num);
+    }
+
+
+    return count;
   }
 
 } /* end class HashingProblems */
